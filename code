@@ -1,0 +1,177 @@
+package twitter4j.examples.friendsandfollowers;
+
+import twitter4j.Status;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.User;
+import twitter4j.conf.ConfigurationBuilder;
+import twitter4j.PagableResponseList;
+import twitter4j.Paging;
+import twitter4j.ResponseList;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+
+public class KeywordFINAL {
+	
+	public static void main(String[] args) throws InterruptedException {
+		
+		Twitter twitter = new TwitterFactory().getInstance();
+        
+        try {
+        	
+            ConfigurationBuilder cb = new ConfigurationBuilder();
+            
+            cb.setDebugEnabled(true)
+            
+              .setOAuthConsumerKey("Consumer Key")          
+              											    
+              .setOAuthConsumerSecret("Consumer Secret")    
+              											    //   All acquired from a Twitter Development Application -> https://apps.twitter.com/
+              .setOAuthAccessToken("Access Token")          
+              											   
+              .setOAuthAccessTokenSecret("Token Secret");
+            
+            TwitterFactory tf = new TwitterFactory(cb.build());  
+
+            long cursor = -1;
+            int stop = 1;
+            String userID = "username";     // Substitue username for the actual username you intend to gather the follower list from
+            PagableResponseList<User> ids;
+            ResponseList<Status> statuses;
+            List<User> followerList = new ArrayList<>();
+            
+            int count = 0;
+            int turnCount = 0;
+
+            int y = 10;
+            
+            int keywordCount1 = 0;
+            int keywordCount2 = 0;
+            int keywordCount3 = 0;
+            int keywordCount4 = 0;
+
+            
+            DateFormat dateFormat = new SimpleDateFormat("MM/dd/yy HH:mm:ss");
+
+      	//------------------Gets a list of followers--------------------
+            
+    		do {
+
+    			Twitter twitter1 = tf.getInstance();
+				
+				ids = twitter1.getFollowersList(userID, cursor, 200);
+    			
+    			for (User id : ids) {
+    				
+    				count = count + 1;
+
+    				if (count < 3000 || count < ids.size()) {
+    					
+    					followerList.add(id);
+
+    				} else if (count == 3000 || count == ids.size()) {
+    					
+    					followerList.add(id);
+    					
+    					turnCount = turnCount + 1;
+
+    					if (turnCount != y) { // In turnCount != y, y mulitplied by 3000 will be the amount of followers the program gathers.
+    						
+    						Calendar cal = Calendar.getInstance();
+    						System.out.println("Number of followers obtained so far: " + followerList.size() + " - (" + dateFormat.format(cal.getTime()).toString() + ")");
+    						Thread.sleep(900001);
+    						count = 0;
+    						
+    					} else {
+    						
+    						Calendar cal = Calendar.getInstance();
+    						System.out.println("Number of followers obtained so far: " + followerList.size() + " - (" + dateFormat.format(cal.getTime()).toString() + ")");
+    						stop = 0;
+    						
+    					}
+    					
+    				}
+
+    			}
+
+    		} while ((cursor = ids.getNextCursor()) != 0 && stop != 0);
+    		
+    		//-----------------Gets at most 3200 tweets from each follower in followerList------------------
+    		
+    		int tweetcount = 0;
+
+    		for (User follower : followerList) {
+    			
+    			if (follower.isProtected() == false) {
+    				
+    				for (int x = 1; x < 18; x++) {  // Uses pagination to gather up to 3200 tweets (each new x is the next page
+            			
+        				Twitter twitter2 = tf.getInstance();
+        				
+            			Paging paging = new Paging(x, 200);
+
+            			statuses = twitter2.getUserTimeline(follower.getScreenName(), paging);
+            			
+                  		//--------------------Checks for keywords in each of those tweets---------------------
+            			
+            			for (Status status : statuses) {
+                				
+            				tweetcount = tweetcount + 1;
+
+            				String fullTweet = ((follower.getScreenName() + " - " + status.getCreatedAt() + " - " + status.getText()).replaceAll("\\n", "").replaceAll("\\r", ""));
+            				
+            				System.out.println(fullTweet); // Prints out each tweet gathered (this is optional)
+            				
+            				if (fullTweet.toLowerCase().contains("keyword1") == true) {
+            		 			
+            						keywordCount1 += 1;
+            	    									
+            	    		} else if (fullTweet.toLowerCase().contains("keyword2")  == true) {
+            	    								
+            	    				keywordCount2 += 1;													// Substitute the keyword placeholders for the keywords you intend to search for.
+            	    								
+            	    		} else if (fullTweet.toLowerCase().contains("keyword3")  == true) {
+            	    								
+            	    				keywordCount3 += 1;
+            	    								
+            	    		} else if (fullTweet.toLowerCase().contains("keyword4")  == true) {
+            	    								
+            	    				keywordCount4 += 1;
+		
+            	    		}
+        				
+            			}		
+
+        			}
+    				
+    			} else if (follower.isProtected() == true) {
+    				
+    				break;
+    				
+    			}
+
+    		}
+
+    		//--------------Displays how many times each keyword was found-------------------
+    		
+    		System.out.println("");
+    		System.out.println("Number of tweets from " + followerList.size() + " users: " + tweetcount);
+
+    		System.out.println("");
+    		System.out.println("Keyword1: " + keywordCount1);
+    		System.out.println("Keyword2: " + keywordCount2);
+    		System.out.println("Keyword3: " + keywordCount3);
+    		System.out.println("Keyword4: " + keywordCount4);
+
+        } catch (TwitterException te) {
+        	te.printStackTrace();
+        	System.out.println("Failed to get timeline: " + te.getMessage());
+        	System.exit(-1);
+  }
+ }
+}
