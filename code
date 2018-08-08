@@ -40,7 +40,7 @@ public class KeywordFINAL {
 
             long cursor = -1;
             int stop = 1;
-            String userID = "username";     // Substitue username for the actual username you intend to gather the follower list from
+            String userID = "username";     // Substitute username for the actual username you intend to gather the follower list from
             PagableResponseList<User> ids;
             ResponseList<Status> statuses;
             List<User> followerList = new ArrayList<>();
@@ -113,39 +113,39 @@ public class KeywordFINAL {
             			
         				Twitter twitter2 = tf.getInstance();
         				
-            			Paging paging = new Paging(x, 200);
+            				Paging paging = new Paging(x, 200);
 
-            			statuses = twitter2.getUserTimeline(follower.getScreenName(), paging);
+            				statuses = twitter2.getUserTimeline(follower.getScreenName(), paging);
             			
-                  		//--------------------Checks for keywords in each of those tweets---------------------
+                  			//--------------------Checks for keywords in each of those tweets---------------------
             			
-            			for (Status status : statuses) {
+            				for (Status status : statuses) {
                 				
-            				tweetcount = tweetcount + 1;
+            					tweetcount = tweetcount + 1;
 
-            				String fullTweet = ((follower.getScreenName() + " - " + status.getCreatedAt() + " - " + status.getText()).replaceAll("\\n", "").replaceAll("\\r", ""));
+            					String fullTweet = ((follower.getScreenName() + " - " + status.getCreatedAt() + " - " + status.getText()).replaceAll("\\n", "").replaceAll("\\r", ""));
             				
-            				System.out.println(fullTweet); // Prints out each tweet gathered (this is optional)
+            					System.out.println(fullTweet); // Prints out each tweet gathered (this is optional)
             				
-            				if (fullTweet.toLowerCase().contains("keyword1") == true) {
+            					if (fullTweet.toLowerCase().contains("keyword1") == true) {
             		 			
             						keywordCount1 += 1;
-            	    									
-            	    		} else if (fullTweet.toLowerCase().contains("keyword2")  == true) {
+            	    										
+            	    				} else if (fullTweet.toLowerCase().contains("keyword2")  == true) {
             	    								
-            	    				keywordCount2 += 1;													// Substitute the keyword placeholders for the keywords you intend to search for.
+            	    					keywordCount2 += 1;													// Substitute the keyword placeholders for the keywords you intend to search for.
             	    								
-            	    		} else if (fullTweet.toLowerCase().contains("keyword3")  == true) {
+            	    				} else if (fullTweet.toLowerCase().contains("keyword3")  == true) {
             	    								
-            	    				keywordCount3 += 1;
+            	    					keywordCount3 += 1;
             	    								
-            	    		} else if (fullTweet.toLowerCase().contains("keyword4")  == true) {
+            	    				} else if (fullTweet.toLowerCase().contains("keyword4")  == true) {
             	    								
-            	    				keywordCount4 += 1;
+            	    					keywordCount4 += 1;
 		
-            	    		}
+            	    				}
         				
-            			}		
+            				}		
 
         			}
     				
